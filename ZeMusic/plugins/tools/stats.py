@@ -107,3 +107,33 @@ async def bot_stats(client, CallbackQuery, _):
     free = hdd.free / (1024.0**3)
     call = await mongodb.command("dbstats")
     datasize = call["dataSize"] / 1024
+storage = call["storageSize"] / 1024
+    served_chats = len(await get_served_chats())
+    served_users = len(await get_served_users())
+    text = _["gstats_5"].format(
+        app.mention,
+        len(ALL_MODULES),
+        platform.system(),
+        ram,
+        p_core,
+        t_core,
+        cpu_freq,
+        pyver.split()[0],
+        pyrover,
+        pytgver,
+        str(total)[:4],
+        str(used)[:4],
+        str(free)[:4],
+        str(datasize):4,
+        str(storage):4,
+        servedchats,
+        servedusers,
+        len(SUDOERS),
+    )
+    med = InputMediaPhoto(media=config.STATSIMGURL, caption=text)
+    try:
+        await CallbackQuery.editmessagemedia(media=med, replymarkup=upl)
+    except MessageIdInvalid:
+        await CallbackQuery.message.replyphoto(
+            photo=config.STATSIMGURL, caption=text, replymarkup=upl
+        )
