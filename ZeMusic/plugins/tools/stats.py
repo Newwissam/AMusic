@@ -18,7 +18,7 @@ from ZeMusic.utils.decorators.language import language, languageCB
 from ZeMusic.utils.inline.stats import back_stats_buttons, stats_buttons 
 from config import BANNED_USERS, BOT_USERNAME
 
-BOT_USERNAME = "اسم_المستخدم_الخاص_بالبوت"
+BOT_USERNAME = "BOT_USERNAME"
 
 @app.on_message(filters.command(["الاحصائيات", "ترند"]) & filters.group & ~BANNED_USERS)
 @language
@@ -136,4 +136,4 @@ storage = call["storageSize"] / 1024
     except MessageIdInvalid:
         await CallbackQuery.message.replyphoto(
             photo=config.STATSIMGURL, caption=text, replymarkup=upl
-        )
+        ) 
