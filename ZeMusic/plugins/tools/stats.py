@@ -1,30 +1,27 @@
-import platform 
-from sys import version as pyver 
- 
-import psutil 
-from pyrogram import version as pyrover 
-from pyrogram import filters 
-from pyrogram.errors import MessageIdInvalid 
-from pyrogram.types import InputMediaPhoto, Message 
-from pytgcalls.version import version as pytgver 
- 
-import config 
-from ZeMusic import app 
-from ZeMusic.core.userbot import assistants 
-from ZeMusic.misc import SUDOERS, mongodb 
-from ZeMusic.plugins import ALL_MODULES 
-from ZeMusic.utils.database import get_served_chats, get_served_users, get_sudoers 
-from ZeMusic.utils.decorators.language import language, languageCB 
-from ZeMusic.utils.inline.stats import back_stats_buttons, stats_buttons 
-from config import BANNED_USERS, BOT_USERNAME
+import platform
+from sys import version as pyver
 
-BOT_USERNAME = "BOT_USERNAME"
+import psutil
+from pyrogram import __version__ as pyrover
+from pyrogram import filters
+from pyrogram.errors import MessageIdInvalid
+from pyrogram.types import InputMediaPhoto, Message
+from pytgcalls.__version__ import __version__ as pytgver
 
-@app.on_message(filters.command(["الاحصائيات", "ترند"]) & filters.group & ~BANNED_USERS)
+import config
+from ZeMusic import app
+from ZeMusic.core.userbot import assistants
+from ZeMusic.misc import SUDOERS, mongodb
+from ZeMusic.plugins import ALL_MODULES
+from ZeMusic.utils.database import get_served_chats, get_served_users, get_sudoers
+from ZeMusic.utils.decorators.language import language, languageCB
+from ZeMusic.utils.inline.stats import back_stats_buttons, stats_buttons
+from config import BANNED_USERS
+
+
+@app.on_message(filters.command(["الاحصائيات", "ترند","الإحصائيات"]) & filters.group & ~BANNED_USERS)
 @language
 async def stats_global(client, message: Message, _):
-    if message.from_user.username != BOT_USERNAME:
-        return
     upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
     await message.reply_photo(
         photo=config.STATS_IMG_URL,
@@ -36,8 +33,6 @@ async def stats_global(client, message: Message, _):
 @app.on_callback_query(filters.regex("stats_back") & ~BANNED_USERS)
 @languageCB
 async def home_stats(client, CallbackQuery, _):
-    if CallbackQuery.from_user.username != BOT_USERNAME:
-        return
     upl = stats_buttons(_, True if CallbackQuery.from_user.id in SUDOERS else False)
     await CallbackQuery.edit_message_text(
         text=_["gstats_2"].format(app.mention),
@@ -48,8 +43,6 @@ async def home_stats(client, CallbackQuery, _):
 @app.on_callback_query(filters.regex("TopOverall") & ~BANNED_USERS)
 @languageCB
 async def overall_stats(client, CallbackQuery, _):
-    if CallbackQuery.from_user.username != BOT_USERNAME:
-        return
     await CallbackQuery.answer()
     upl = back_stats_buttons(_)
     try:
@@ -82,7 +75,7 @@ async def overall_stats(client, CallbackQuery, _):
 @app.on_callback_query(filters.regex("bot_stats_sudo"))
 @languageCB
 async def bot_stats(client, CallbackQuery, _):
-    if CallbackQuery.from_user.username != BOT_USERNAME:
+    if CallbackQuery.from_user.id not in SUDOERS:
         return await CallbackQuery.answer(_["gstats_4"], show_alert=True)
     upl = back_stats_buttons(_)
     try:
@@ -107,7 +100,7 @@ async def bot_stats(client, CallbackQuery, _):
     free = hdd.free / (1024.0**3)
     call = await mongodb.command("dbstats")
     datasize = call["dataSize"] / 1024
-storage = call["storageSize"] / 1024
+    storage = call["storageSize"] / 1024
     served_chats = len(await get_served_chats())
     served_users = len(await get_served_users())
     text = _["gstats_5"].format(
@@ -124,16 +117,19 @@ storage = call["storageSize"] / 1024
         str(total)[:4],
         str(used)[:4],
         str(free)[:4],
-        str(datasize):4,
-        str(storage):4,
-        servedchats,
-        servedusers,
-        len(SUDOERS),
+        served_chats,
+        served_users,
+        len(BANNED_USERS),
+        len(await get_sudoers()),
+        str(datasize)[:6],
+        storage,
+        call["collections"],
+        call["objects"],
     )
-    med = InputMediaPhoto(media=config.STATSIMGURL, caption=text)
+    med = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)
     try:
-        await CallbackQuery.editmessagemedia(media=med, replymarkup=upl)
+        await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except MessageIdInvalid:
-        await CallbackQuery.message.replyphoto(
-            photo=config.STATSIMGURL, caption=text, replymarkup=upl
-        ) 
+        await CallbackQuery.message.reply_photo(
+            photo=config.STATS_IMG_URL, caption=text, reply_markup=upl
+        )
