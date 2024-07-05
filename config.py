@@ -1,114 +1,139 @@
-import re
-from os import getenv
-
-from dotenv import load_dotenv
-from pyrogram import filters
-
-load_dotenv()
+import platform 
+from sys import version as pyver 
  
-# Get this value from my.telegram.org/apps
-API_ID = int(getenv("API_ID","20036317"))
-API_HASH = getenv("API_HASH","986cb4ba434870a62fe96da3b5f6d411")
+import psutil 
+from pyrogram import version as pyrover 
+from pyrogram import filters 
+from pyrogram.errors import MessageIdInvalid 
+from pyrogram.types import InputMediaPhoto, Message 
+from pytgcalls.version import version as pytgver 
+ 
+import config 
+from ZeMusic import app 
+from ZeMusic.core.userbot import assistants 
+from ZeMusic.misc import SUDOERS, mongodb 
+from ZeMusic.plugins import ALL_MODULES 
+from ZeMusic.utils.database import get_served_chats, get_served_users, get_sudoers 
+from ZeMusic.utils.decorators.language import language, languageCB 
+from ZeMusic.utils.inline.stats import back_stats_buttons, stats_buttons 
+from config import BANNED_USERS, BOT_USERNAME
 
-# Get your token from @BotFather on Telegram.
-BOT_TOKEN = getenv("BOT_TOKEN")
-BOT_NAME = getenv("BOT_NAME","")
+BOT_USERNAME = "BOT_USERNAME"
 
-# Get your mongo url from cloud.mongodb.com
-MONGO_DB_URI = getenv("MONGO_DB_URI","mongodb+srv://Wissam:wsaesdseds12@wissam.atp5ilp.mongodb.net/?retryWrites=true&w=majority&appName=Wissam")
-
-DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 480))
-
-# Chat id of a group for logging bot s activities
-LOGGER_ID = int(getenv("LOGGER_ID"))
-
-# Get this value from @FallenxBot on Telegram by /id
-OWNER_ID = int(getenv("OWNER_ID", 5932940185))
-
-## Fill these variables if you re deploying on heroku.
-# Your heroku app name
-HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
-# Get it from http://dashboard.heroku.com/account
-HEROKU_API_KEY = getenv("HEROKU_API_KEY")
-
-UPSTREAM_REPO = getenv(
-    "UPSTREAM_REPO",
-    "https://github.com/Newwissam/AMusic",
-)
-UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "master")
-GIT_TOKEN = getenv(
-    "GIT_TOKEN", None
-)  # Fill this variable if your upstream repository is private
-
-CHANNEL_NAME = getenv("CHANNEL_NAME", "𝐬𝐨𝐮𝐫𝐜𝐞 𝐫𝐨𝐧𝐚")
-CHANNEL_LINK = getenv("CHANNEL_LINK", "https://t.me/sourcerona")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/sourcerona")
-
-# Set this to True if you want the assistant to automatically leave chats after an interval
-AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
+@app.on_message(filters.command(["الاحصائيات", "ترند"]) & filters.group & ~BANNED_USERS)
+@language
+async def stats_global(client, message: Message, _):
+    if message.from_user.username != BOT_USERNAME:
+        return
+    upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
+    await message.reply_photo(
+        photo=config.STATS_IMG_URL,
+        caption=_["gstats_2"].format(app.mention),
+        reply_markup=upl,
+    )
 
 
-# Get this credentials from https://developer.spotify.com/dashboard
-SPOTIFY_CLIENT_ID = getenv("SPOTIFY_CLIENT_ID", None)
-SPOTIFY_CLIENT_SECRET = getenv("SPOTIFY_CLIENT_SECRET", None)
+@app.on_callback_query(filters.regex("stats_back") & ~BANNED_USERS)
+@languageCB
+async def home_stats(client, CallbackQuery, _):
+    if CallbackQuery.from_user.username != BOT_USERNAME:
+        return
+    upl = stats_buttons(_, True if CallbackQuery.from_user.id in SUDOERS else False)
+    await CallbackQuery.edit_message_text(
+        text=_["gstats_2"].format(app.mention),
+        reply_markup=upl,
+    )
 
 
-# Maximum limit for fetching playlist s track from youtube, spotify, apple links.
-PLAYLIST_FETCH_LIMIT = int(getenv("PLAYLIST_FETCH_LIMIT", 25))
-
-
-# Telegram audio and video file size limit (in bytes)
-TG_AUDIO_FILESIZE_LIMIT = int(getenv("TG_AUDIO_FILESIZE_LIMIT", 104857600))
-TG_VIDEO_FILESIZE_LIMIT = int(getenv("TG_VIDEO_FILESIZE_LIMIT", 1073741824))
-# Checkout https://www.gbmb.org/mb-to-bytes for converting mb to bytes
-
-
-# Get your pyrogram v2 session from @StringFatherBot on Telegram
-STRING1 = getenv("STRING_SESSION",None)
-STRING2 = getenv("STRING_SESSION2", None)
-STRING3 = getenv("STRING_SESSION3", None)
-STRING4 = getenv("STRING_SESSION4", None)
-STRING5 = getenv("STRING_SESSION5", None)
-
-
-BANNED_USERS = filters.user()
-adminlist = {}
-lyrical = {}
-votemode = {}
-autoclean = []
-confirmer = {}
-
-
-START_IMG_URL = getenv("START_IMG_URL")
-PING_IMG_URL = "https://te.legra.ph/file/b8a0c1a00db3e57522b53.jpg"
-PLAYLIST_IMG_URL = "https://te.legra.ph/file/4ec5ae4381dffb039b4ef.jpg"
-STATS_IMG_URL = "https://te.legra.ph/file/e906c2def5afe8a9b9120.jpg"
-TELEGRAM_AUDIO_URL = "https://te.legra.ph/file/6298d377ad3eb46711644.jpg"
-TELEGRAM_VIDEO_URL = "https://te.legra.ph/file/6298d377ad3eb46711644.jpg"
-STREAM_IMG_URL = "https://te.legra.ph/file/bd995b032b6bd263e2cc9.jpg"
-SOUNCLOUD_IMG_URL = "https://te.legra.ph/file/bb0ff85f2dd44070ea519.jpg"
-YOUTUBE_IMG_URL = "https://te.legra.ph/file/6298d377ad3eb46711644.jpg"
-SPOTIFY_ARTIST_IMG_URL = "https://te.legra.ph/file/37d163a2f75e0d3b403d6.jpg"
-SPOTIFY_ALBUM_IMG_URL = "https://te.legra.ph/file/b35fd1dfca73b950b1b05.jpg"
-SPOTIFY_PLAYLIST_IMG_URL = "https://te.legra.ph/file/95b3ca7993bbfaf993dcb.jpg"
-
-
-def time_to_seconds(time):
-    stringt = str(time)
-    return sum(int(x) * 60**i for i, x in enumerate(reversed(stringt.split(":"))))
-
-
-DURATION_LIMIT = int(time_to_seconds(f"{DURATION_LIMIT_MIN}:00"))
-
-
-if CHANNEL_LINK:
-    if not re.match("(?:http|https)://", CHANNEL_LINK):
-        raise SystemExit(
-            "[ERROR] - Your CHANNEL_LINK url is wrong. Please ensure that it starts with https://"
+@app.on_callback_query(filters.regex("TopOverall") & ~BANNED_USERS)
+@languageCB
+async def overall_stats(client, CallbackQuery, _):
+    if CallbackQuery.from_user.username != BOT_USERNAME:
+        return
+    await CallbackQuery.answer()
+    upl = back_stats_buttons(_)
+    try:
+        await CallbackQuery.answer()
+    except:
+        pass
+    await CallbackQuery.edit_message_text(_["gstats_1"].format(app.mention))
+    served_chats = len(await get_served_chats())
+    served_users = len(await get_served_users())
+    text = _["gstats_3"].format(
+        app.mention,
+        len(assistants),
+        len(BANNED_USERS),
+        served_chats,
+        served_users,
+        len(ALL_MODULES),
+        len(SUDOERS),
+        config.AUTO_LEAVING_ASSISTANT,
+        config.DURATION_LIMIT_MIN,
+    )
+    med = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)
+    try:
+        await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
+    except MessageIdInvalid:
+        await CallbackQuery.message.reply_photo(
+            photo=config.STATS_IMG_URL, caption=text, reply_markup=upl
         )
 
-if SUPPORT_CHAT:
-    if not re.match("(?:http|https)://", SUPPORT_CHAT):
-        raise SystemExit(
-            "[ERROR] - Your SUPPORT_CHAT url is wrong. Please ensure that it starts with https://"
-        )
+
+@app.on_callback_query(filters.regex("bot_stats_sudo"))
+@languageCB
+async def bot_stats(client, CallbackQuery, _):
+    if CallbackQuery.from_user.username != BOT_USERNAME:
+        return await CallbackQuery.answer(_["gstats_4"], show_alert=True)
+    upl = back_stats_buttons(_)
+    try:
+        await CallbackQuery.answer()
+    except:
+        pass
+    await CallbackQuery.edit_message_text(_["gstats_1"].format(app.mention))
+    p_core = psutil.cpu_count(logical=False)
+    t_core = psutil.cpu_count(logical=True)
+    ram = str(round(psutil.virtual_memory().total / (1024.0**3))) + " ɢʙ"
+    try:
+        cpu_freq = psutil.cpu_freq().current
+        if cpu_freq >= 1000:
+            cpu_freq = f"{round(cpu_freq / 1000, 2)}ɢʜᴢ"
+        else:
+            cpu_freq = f"{round(cpu_freq, 2)}ᴍʜᴢ"
+    except:
+        cpu_freq = "ғᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ"
+    hdd = psutil.disk_usage("/")
+    total = hdd.total / (1024.0**3)
+    used = hdd.used / (1024.0**3)
+    free = hdd.free / (1024.0**3)
+    call = await mongodb.command("dbstats")
+    datasize = call["dataSize"] / 1024
+storage = call["storageSize"] / 1024
+    served_chats = len(await get_served_chats())
+    served_users = len(await get_served_users())
+    text = _["gstats_5"].format(
+        app.mention,
+        len(ALL_MODULES),
+        platform.system(),
+        ram,
+        p_core,
+        t_core,
+        cpu_freq,
+        pyver.split()[0],
+        pyrover,
+        pytgver,
+        str(total)[:4],
+        str(used)[:4],
+        str(free)[:4],
+        str(datasize):4,
+        str(storage):4,
+        servedchats,
+        servedusers,
+        len(SUDOERS),
+    )
+    med = InputMediaPhoto(media=config.STATSIMGURL, caption=text)
+    try:
+        await CallbackQuery.editmessagemedia(media=med, replymarkup=upl)
+    except MessageIdInvalid:
+        await CallbackQuery.message.replyphoto(
+            photo=config.STATSIMGURL, caption=text, replymarkup=upl
+        ) 
