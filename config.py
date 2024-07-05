@@ -18,7 +18,7 @@ from ZeMusic.utils.decorators.language import language, languageCB
 from ZeMusic.utils.inline.stats import back_stats_buttons, stats_buttons 
 from config import BANNED_USERS, BOT_USERNAME
 
-BOT_USERNAME = "BOT_USERNAME"
+BOT_USERNAME = "LR7BOT"
 
 @app.on_message(filters.command(["الاحصائيات", "ترند"]) & filters.group & ~BANNED_USERS)
 @language
