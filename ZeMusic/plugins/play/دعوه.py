@@ -9,13 +9,13 @@ from ZeMusic.core.call import Mody
 
 @app.on_message(filters.video_chat_started)
 async def brah(_, msg):
-       await msg.reply("<b> تم بدء المكالمه الي وده يسمعنا صوته حياه</b>")
+       await msg.reply("<b> ↞ تم بدء تشغيل المكالمه</b>")
 
 
 
 @app.on_message(filters.video_chat_members_invited)
 async def brah3(app :app, message:Message):
-           text = f"↞ هالحلو يبيك {message.from_user.mention} \n↞ تعال ياحلو للمكالمه :"
+           text = f"↞ هالحلو  {message.from_user.mention} \n↞ يبيك في المكالمه :"
            x = 0
            for user in message.video_chat_members_invited.users:
              try:
