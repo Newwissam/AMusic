@@ -10,6 +10,7 @@ from youtubesearchpython.__future__ import VideosSearch
 from ZeMusic import app
 from config import YOUTUBE_IMG_URL
 
+YOUTUBE_IMG = "https://telegra.ph/file/00f2f8984eaa3fec2d850.jpg"
 
 def changeImageSize(maxWidth, maxHeight, image):
     widthRatio = maxWidth / image.size[0]
