@@ -25,7 +25,7 @@ async def BotMusic(client: Client, message: Message):
             rank = italy
     except Exception as e:
         print(e)
-    await message.reply_text(f"<b>-›لبيه:</b> {rank}\n<b>-› انا بوت ميزوك اشغل لك الي تبي </b>")
+    await message.reply_text(f"<b> لبيه يا:</b> {rank}\n<b> انا اسمي ليزا وظيفتي اشغل اغاني في المكالمه عشان تعرف اكثر تابع قناة السورس @sourcerona </b>")
 
         
 
