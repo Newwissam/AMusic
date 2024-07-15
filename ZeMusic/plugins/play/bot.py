@@ -26,19 +26,7 @@ async def BotMusic(client: Client, message: Message):
     except Exception as e:
         print(e)
     await message.reply_text(f"<b> لبيه يا:</b> {rank}\n<b> انا اسمي ليزا وظيفتي اشغل اغاني في المكالمه عشان تعرف اكثر تابع قناة السورس @sourcerona </b>")
-
-
-InlineKeyboardButton(
-                        "𝘀𝗼𝘂𝗿𝗰𝗲 𝗹𝗶𝘀𝗮", url=f"https://t.me/sourcerona"),         
-                ],
-
-            ]
-
-        ),
-
-    )
         
-
 
 @app.on_message(filters.regex(r"^(ايديي|id)$"))
 async def IdMusic(client: Client, message: Message):
