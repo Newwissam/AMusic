@@ -60,4 +60,20 @@ async def BioMusic(client: Client, message: Message):
 async def DeletMusic(client: Client, message: Message):
     await message.reply_text(f"""<b>بوت الحذف : </b> ( @DTeLebot )\n\n<b>رابط الحذف : </b> ( <a href="https://my.telegram.org/auth?to=delete">اضغط هنا</a> )""")
 
+@app.on_message(filters.command("","بوت"))
+def vgdg(client,message):
+        message.reply_text(
+            f"""✧ مرحبا انا اسمي ليزا وضيفتي تشغيل الاغاني في المكالمه,
+ᴅᴇᴠᴇʟᴏᴘᴇʀ -› Wissam♪ @onlywissam
+ᴄʜᴀɴɴᴇʟ -› 𝘀𝗼𝘂𝗿𝗰𝗲 𝗹𝗶𝘀𝗮 @sourcerona""", 
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            "تحديثات ليزا 🍻", url=f"t.me/sourcerona")
+                    ]
+                ]
+            ),
+            disable_web_page_preview=True
 
+        )
