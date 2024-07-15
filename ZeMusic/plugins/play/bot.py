@@ -63,3 +63,12 @@ async def DeletMusic(client: Client, message: Message):
     await message.reply_text(f"""<b>بوت الحذف : </b> ( @DTeLebot )\n\n<b>رابط الحذف : </b> ( <a href="https://my.telegram.org/auth?to=delete">اضغط هنا</a> )""")
 
 
+InlineKeyboardButton(
+                        "𝘀𝗼𝘂𝗿𝗰𝗲 𝗹𝗶𝘀𝗮", url=f"https://t.me/sourcerona"),         
+                ],
+
+            ]
+
+        ),
+
+    )
