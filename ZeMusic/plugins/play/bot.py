@@ -26,7 +26,15 @@ async def BotMusic(client: Client, message: Message):
     except Exception as e:
         print(e)
     await message.reply_text(f"<b> لبيه يا:</b> {rank}\n<b> انا اسمي ليزا وظيفتي اشغل اغاني في المكالمه عشان تعرف اكثر تابع قناة السورس @sourcerona </b>")
+InlineKeyboardButton(
+                        "𝘀𝗼𝘂𝗿𝗰𝗲 𝗹𝗶𝘀𝗮", url=f"https://t.me/sourcerona"),         
+                ],
 
+            ]
+
+        ),
+
+    )
         
 
 
@@ -63,12 +71,3 @@ async def DeletMusic(client: Client, message: Message):
     await message.reply_text(f"""<b>بوت الحذف : </b> ( @DTeLebot )\n\n<b>رابط الحذف : </b> ( <a href="https://my.telegram.org/auth?to=delete">اضغط هنا</a> )""")
 
 
-InlineKeyboardButton(
-                        "𝘀𝗼𝘂𝗿𝗰𝗲 𝗹𝗶𝘀𝗮", url=f"https://t.me/sourcerona"),         
-                ],
-
-            ]
-
-        ),
-
-    )
