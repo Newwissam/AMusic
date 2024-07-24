@@ -23,13 +23,14 @@ Nem = config.BOT_NAME + " ابحث"
 async def song_downloader(client, message: Message):
     query = " ".join(message.command[1:])
     m = await message.reply_text("<b> جارِ البحث عـن المقطع الصوتي . . .</b>")
-    ydl_ops = {
+  ydl_ops = {
         'format': 'bestaudio[ext=m4a]',
         'keepvideo': True,
         'prefer_ffmpeg': False,
         'geo_bypass': True,
         'outtmpl': '%(title)s.%(ext)s',
         'quite': True,
+        'proxy': '8.223.31.16:80'
     }
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
