@@ -23,7 +23,7 @@ Nem = config.BOT_NAME + " ابحث"
 async def song_downloader(client, message: Message):
     query = " ".join(message.command[1:])
     m = await message.reply_text("<b> جارِ البحث عـن المقطع الصوتي . . .</b>")
-  ydl_ops = {
+    ydl_ops = {
         'format': 'bestaudio[ext=m4a]',
         'keepvideo': True,
         'prefer_ffmpeg': False,
